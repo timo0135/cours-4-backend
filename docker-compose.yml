@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  php: 
+  php:
     build: ./docker/php
     user: ${UID:-1000}:${GID:-1000}
     ports:
@@ -8,3 +8,24 @@ services:
     volumes:
       - ./:/var/www/html
     command: php -S 0.0.0.0:80 -t public
+
+  database:
+    image: mariadb:11
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWD:-password}
+      MYSQL_DATABASE: ${DB_DATABASE:-database}
+      MYSQL_USER: ${DB_USER_NAME:-user}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD:-password}
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "${DB_PORT:-3306}:3306"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+
+volumes:
+  db-data:
